@@ -48,4 +48,4 @@ logging:
     com.cs.mapper: debug
 
 server:
-  port: 8081  # 指定端口为8081
+  port: 8082  # 指定端口为8081

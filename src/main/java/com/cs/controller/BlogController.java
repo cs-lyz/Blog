@@ -69,7 +69,9 @@ public class BlogController {
 
     //修改博客  全传过来，全段更新
     @RequestMapping("update")
-    public Result<String> updateBlog(@RequestParam("blogTitle") String blogTitle,
+    public Result<String> updateBlog(
+            @RequestParam("blogId") Long blogId,
+                                        @RequestParam("blogTitle") String blogTitle,
                                      @RequestParam(name = "blogSubUrl", required = false) String blogSubUrl,
                                      @RequestParam("blogCategoryId") Integer blogCategoryId,
                                      @RequestParam("blogTags") String blogTags,
@@ -101,7 +103,7 @@ public class BlogController {
         if (!StringUtils.hasText(blogCoverImage)) {
             return Result.fail(HttpStatusEnum.PARAM_ERROR.getCode(),"封面图不能为空");
         }
-        Blog blog=Blog.builder().blogTitle(blogTitle).blogSubUrl(blogSubUrl)
+        Blog blog=Blog.builder().blogId(blogId).blogTitle(blogTitle).blogSubUrl(blogSubUrl)
                 .blogCategoryId(blogCategoryId).blogTags(blogTags).blogContent(blogContent)
                 .blogCoverImage(blogCoverImage).blogStatus(blogStatus).enableComment(enableComment).build();
         return  blogService.update(blog);
@@ -120,13 +122,18 @@ public class BlogController {
         LambdaQueryWrapper<Blog> queryWrapper = new LambdaQueryWrapper<>();
         String keyword = (String)param.get("keyword");
         if(StringUtils.hasText(keyword)){
-            queryWrapper.apply("MATCH(blog_title, blog_content) AGAINST({0} IN BOOLEAN MODE)", keyword);
+            String searchKeyword = keyword + "*";
+            queryWrapper.apply("MATCH(blog_title, blog_content) AGAINST({0} IN BOOLEAN MODE)", searchKeyword);
         }
         if (param.containsKey("categoryId")) {
-            queryWrapper.eq(Blog::getBlogCategoryId, param.get("categoryId"));
+            Object categoryIdObj = param.get("categoryId");
+            if (categoryIdObj != null && !categoryIdObj.toString().isEmpty()) {
+                Integer categoryId = Integer.parseInt(categoryIdObj.toString());
+                queryWrapper.eq(Blog::getBlogCategoryId, categoryId);
+            }
         }
 
-        Page<Blog> blogPage = blogService.page(page, queryWrapper);
+        Page<Blog> blogPage = blogService.page(page,queryWrapper);
         return Result.success("查询成功",blogPage);
     }
     //删除博客

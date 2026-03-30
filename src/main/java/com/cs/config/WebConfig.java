@@ -16,7 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
 
         //先添加的先执行
         registry.addInterceptor(authInterceptor)
-                .excludePathPatterns("/user/login",   // 排除登录接口
-                                     "/user/register");
+                .excludePathPatterns("/captcha",   // 排除登录接口
+                                    "/blog/**",//测试
+                                    "/user/login");
     }
 }

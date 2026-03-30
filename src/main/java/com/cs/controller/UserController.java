@@ -32,13 +32,13 @@ public class UserController {
         }
         // 2. session验证码校验
         Object captcha = session.getAttribute("captcha");
+        System.out.println(captcha);
+        System.out.println(form);
         if (captcha == null || !form.getCode().equalsIgnoreCase(captcha.toString())) {
-            return Result.fail(HttpStatusEnum.BAD_REQUEST.getCode(), "验证码过期");
+            return Result.fail(HttpStatusEnum.BAD_REQUEST.getCode(), "验证码错误或已过期");
         }
-        session.removeAttribute("captcha"); // 一次性使用
-        if(!form.getCode().equals(session.getAttribute("captcha")) ){
-            return Result.fail(HttpStatusEnum.BAD_REQUEST.getCode(), "验证码错误");
-        }
+        // 验证通过后再移除，避免二次校验时变量被清空
+        session.removeAttribute("captcha");
         //ok,查数据库了
         LambdaQueryWrapper<AdminUser> wrapper = new LambdaQueryWrapper<AdminUser>();
         wrapper.eq(AdminUser::getLoginUserName,form.getLoginUserName());

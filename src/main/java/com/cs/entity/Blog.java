@@ -1,5 +1,8 @@
 package com.cs.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +12,9 @@ import java.util.Date;
 
 @Data
 @Builder
+@TableName("tb_blog")
 public class Blog {
+    @TableId(type = IdType.AUTO)
     private Long blogId;
 
     private String blogTitle;

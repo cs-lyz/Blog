@@ -6,7 +6,7 @@
 
 
     <insert id="insertBatch">
-        INSERT INTO blog_tag_relation (blog_id, tag_id) VALUES
+        INSERT INTO tb_blog_tag_relation (blog_id, tag_id) VALUES
         <foreach collection="allTag" item="tagId" separator=",">
             (#{blogId}, #{tagId})
         </foreach>
