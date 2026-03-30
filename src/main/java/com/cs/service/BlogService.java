@@ -3,6 +3,7 @@ package com.cs.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cs.dto.HttpStatusEnum;
 import com.cs.dto.Result;
 import com.cs.entity.Blog;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-public class BlogService {
+public class BlogService extends ServiceImpl<BlogMapper, Blog> {
 
     @Autowired
     private BlogTagRelationMapper blogTagRelationMapper;
@@ -34,7 +35,7 @@ public class BlogService {
     private BlogCommentMapper blogCommentMapper;
 
     @Transactional   //@Transactional 默认只在遇到 RuntimeException 或 Error 时回滚
-    public Result<String> save(Blog blog) {
+    public Result<String> saveBlog(Blog blog) {
         //插入博客
         //1.先看要归到哪一类
         //注意，先查后改了

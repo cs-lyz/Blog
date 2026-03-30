@@ -5,22 +5,26 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      max-lifetime: 600000
-      connection-timeout: 30000
-      validation-timeout: 5000
+      max-lifetime: 600000   # 10 分钟（单位毫秒），小于 MySQL 的 wait_timeout
+      connection-timeout: 30000  # 获取连接的超时时间（默认 30 秒）
+      validation-timeout: 5000   # 验证连接的超时时间
+      # 如果希望更积极地检测连接有效性，可以设置：
       connection-test-query: SELECT 1
-      keepalive-time: 30000
+      # 或启用 keepalive（HikariCP 2.7+ 支持）
+      keepalive-time: 30000   # 每 30 秒发送一次保活心跳
+
   redis:
-    host: ${REDIS_HOST}
-    port: 6379
-    password: ${REDIS_PASSWORD}
-    database: 0
-    timeout: 10000ms
+    # 基础连接配置
+    host: ${REDIS_HOST}           # Redis服务器地址
+    port: 6379                # Redis服务器端口
+    password: ${REDIS_PASSWORD}          # Redis密码（如果没有设置密码，可以省略或留空）
+    database: 0               # 连接的数据库索引（默认0，可选0-15）
+    timeout: 10000ms  # 命令超时时间，默认可能为 5 秒，调大一些
     lettuce:
       pool:
-        max-active: 8
-        max-idle: 8
-        min-idle: 0
+        max-active: 8   # 连接池最大连接数
+        max-idle: 8     # 最大空闲连接
+        min-idle: 0     # 最小空闲连接
       shutdown-timeout: 100ms
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -28,17 +32,20 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# MyBatis-Plus 配置
 mybatis-plus:
   configuration:
+    # 开启下划线驼峰自动转换，例如数据库字段 user_name 映射到实体类属性 userName
     map-underscore-to-camel-case: true
+    # 打印日志到控制台，方便调试SQL（开发时建议开启，生产环境关闭）
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # 设置实体类的包路径，用于别名扫描
   type-aliases-package: com.cs.entity
+  # 设置Mapper XML文件的位置（如果使用XML写SQL的话）
   mapper-locations: classpath:mapper/*.xml
 logging:
   level:
     com.cs.mapper: debug
+
 server:
-  port: 8081
-  servlet:
-    session:
-      timeout: 300m
+  port: 8081  # 指定端口为8081
